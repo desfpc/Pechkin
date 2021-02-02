@@ -13,7 +13,7 @@ class pechkin {
 
     //constants - you may edit this as you wish
     const LOCALHOST = 'localhost';
-    const LINEBREAK = '\r\n';
+    const LINEBREAK = "\r\n";
     const CONTENT_TYPE = 'multipart/mixed';  //multipart/mixed || text/plain || text/html
     const CHARSET = '"utf-8"';
     const TRANSFER_ENCODEING = 'quoted-printable'; //quoted-printable || 8-bit
@@ -43,8 +43,11 @@ class pechkin {
 
     //other technical params
     public $altBody = '';
+    public $serverIp;
 
     public function __construct($server, $port, $username, $password, $secure=false, int $timeout = 60, bool $debug = false) {
+
+        $this->serverIp = $_SERVER['SERVER_ADDR'];//exec("ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'");
 
         $this->server = $server;
         $this->port = $port;
@@ -58,6 +61,13 @@ class pechkin {
         }
         $this->timeout = $timeout;
         $this->debug = $debug;
+
+        if($this->debug){
+            echo '<hr>mail settings: <br>'.$this->server.'
+            <br>'.$this->port.'
+            <br>'.$this->username.'
+            <br>'.$this->password.'<hr>';
+        }
 
         if(!$this->serverConnect()) return;
         if(!$this->serverAuthorize()) return;
@@ -131,6 +141,10 @@ class pechkin {
     //mail server authorization
     private function serverAuthorize(){
 
+        if($this->debug){
+            echo '<br>Authorizing...';
+        }
+
         fputs($this->connection, 'HELO '.self::LOCALHOST.self::LINEBREAK);
         $this->serverResponse();
 
@@ -173,12 +187,19 @@ class pechkin {
 
     //if mail server response is false
     private function falseResponse($response, $len, $code){
+        if($this->debug){
+            echo '<br>Response code: "'.substr($response, 0, $len),'"';
+        }
         if(substr($response, 0, $len) != $code) return true;
         return false;
     }
 
     //connect to mail server
     public function serverConnect(){
+
+        if($this->debug){
+            echo '<br>Connecting...';
+        }
 
         if($this->secure == 'ssl'){
             $this->server = 'ssl://'.$this->server;
