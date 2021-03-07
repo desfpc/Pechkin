@@ -1,6 +1,6 @@
 <?php
 /**
- * Pechkin v0.1
+ * Pechkin v0.1.2
  * Created by Sergey Peshalov https://github.com/desfpc
  * Lite php SMTP mail send class
  * https://github.com/desfpc/Pechkin
@@ -46,7 +46,7 @@ class pechkin
     private $timeout;
     private $connection;
 
-    public function __construct($server, $port, $username, $password, $secure = false, int $timeout = 60, bool $debug = false)
+    public function __construct($server, $port, $username, $password, $secure = false, $timeout = 60, $debug = false)
     {
 
         $this->serverIp = $_SERVER['SERVER_ADDR'];//exec("ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'");
